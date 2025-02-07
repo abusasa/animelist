@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой список аниме</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #1e1e1e; color: white; }
+        h1 { color: #ffcc00; }
+        #anime-list { max-width: 600px; margin: auto; text-align: left; background: #333; padding: 20px; border-radius: 10px; }
+        .anime-item { padding: 5px; border-bottom: 1px solid #555; }
+    </style>
+</head>
+<body>
+    <h1>Мой список аниме</h1>
+    <div id="anime-list">Загрузка...</div>
+    
+    <script>
+        async function fetchAnimeList() {
+            const repo = "abusasa/animelist";
+            const filePath = "myanimelist.txt"; // Кодируем пробелы в URL
+            const url = `https://raw.githubusercontent.com/${repo}/main/${filePath}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Ошибка загрузки списка");
+                const text = await response.text();
+                
+                const animeArray = text.split("\n").filter(line => line.trim() !== "");
+                document.getElementById("anime-list").innerHTML = animeArray.map(a => `<div class='anime-item'>${a}</div>`).join("");
+            } catch (error) {
+                document.getElementById("anime-list").innerHTML = "Не удалось загрузить список.";
+                console.error(error);
+            }
+        }
+        fetchAnimeList();
+    </script>
+</body>
+</html>
