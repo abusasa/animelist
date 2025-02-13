@@ -16,6 +16,18 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            cursor: none;
+        /* Эффект для мышки */
+        }
+        .cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.5); /* Зеленый цвет */
+            border-radius: 50%; /* Вернул скругленность курсора */
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.3s ease, background 0.3s ease; /* Добавлена задержка */
         }
         .typing-demo {
             width: 29ch;
@@ -45,11 +57,33 @@
     </style>
 </head>
 <body>
+    <!-- Эффект для мышки -->
+    <div class="cursor"></div>
     <div class="typing-demo">Мой список посмотренных anime</div>
     <br>
     <div id="anime-list">Загрузка...</div>
     
     <script>
+        // Эффект для мышки с задержкой
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+        });
+
+        function updateCursor() {
+            cursorX += (mouseX - cursorX) * 0.1; // Добавлена плавная задержка
+            cursorY += (mouseY - cursorY) * 0.1;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+
+        updateCursor();
+
         async function fetchAnimeList() {
             const repo = "abusasa/animelist";
             const filePath = "myanimelist.txt";
