@@ -1,107 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список Абусамата</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prosto+One&display=swap" rel="stylesheet">
-    <link rel="icon" href="vsdw.ico" type="image/x-icon">
-    <style>
-        body { 
-            font-family: 'Prosto One', sans-serif; 
-            background: #000; 
-            color: #0f0; 
-            text-align: left; 
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            cursor: none;
-        /* Эффект для мышки */
-        }
-        .cursor {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(0, 255, 0, 0.5); /* Зеленый цвет */
-            border-radius: 50%; /* Вернул скругленность курсора */
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: transform 0.3s ease, background 0.3s ease; /* Добавлена задержка */
-        }
-        .typing-demo {
-            width: 29ch;
-            animation: typing 2s steps(22), blink .5s step-end infinite alternate;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 3px solid;
-            font-family: monospace;
-            font-size: 1.8em;
-            color: #0f0;
-        }
-        @keyframes typing {
-            from { width: 0 }
-        }
-        @keyframes blink {
-            50% { border-color: transparent }
-        }
-        #anime-list {
-            max-width: 2000px; 
-            padding: 20px; 
-        }
-        .anime-item { 
-            padding: 5px; 
-            border-bottom: 1px solid #0f0; 
-            background: #000; 
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Список Абусамата</title>
+<link rel="icon" href="icon.png">
+<style>@font-face{font-family:Minecraft;src:url(minecraft.ttf)format('truetype');font-display:swap}body{font-family:Minecraft,sans-serif;background:#000;color:#0f0;padding:18px;margin:0;cursor:none}.typing-demo{display:inline-block;width:40ch;animation:typing 2s steps(40,end)forwards;white-space:nowrap;overflow:hidden;font-size:1.4em;margin-bottom:10px;position:relative}.typing-demo::after{content:'|';opacity:0;animation:blink 500ms step-end infinite alternate 2s forwards;margin-left:2px}@keyframes typing{from{width:0}}@keyframes blink{0%,49%{opacity:0}50%,100%{opacity:1}}.controls{display:flex;gap:10px;margin-bottom:10px;align-items:center}#search{padding:10px 12px;width:280px;font-family:Minecraft,sans-serif;background:#000;color:#0f0;border:1px solid #0f0;outline:0}#reset-search{padding:10px 16px;font-family:Minecraft,sans-serif;background:#0f0;color:#000;border:1px solid #0f0;cursor:pointer}#search-info{font-size:.95em;color:#8b8b8b}#anime-list{max-width:2000px;margin:0}.anime-item{margin:0;padding:2px 0;line-height:1.2}.cursor{position:fixed;width:20px;height:20px;background:rgba(0,255,0,.5);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:transform .1s ease;z-index:9999;display:none}.cursor.active{display:block}</style>
 </head>
 <body>
-    <!-- Эффект для мышки -->
-    <div class="cursor"></div>
-    <div class="typing-demo">Мой список посмотренных anime</div>
-    <br>
-    <div id="anime-list">Загрузка...</div>
-    
-    <script>
-        // Эффект для мышки с задержкой
-        const cursor = document.querySelector('.cursor');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.pageX;
-            mouseY = e.pageY;
-        });
-
-        function updateCursor() {
-            cursorX += (mouseX - cursorX) * 0.1; // Добавлена плавная задержка
-            cursorY += (mouseY - cursorY) * 0.1;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            requestAnimationFrame(updateCursor);
-        }
-
-        updateCursor();
-
-        async function fetchAnimeList() {
-            const repo = "abusasa/animelist";
-            const filePath = "myanimelist.txt";
-            const url = `https://raw.githubusercontent.com/${repo}/main/${filePath}`;
-            
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Ошибка загрузки списка");
-                const text = await response.text();
-                
-                const animeArray = text.split("\n").filter(line => line.trim() !== "");
-                document.getElementById("anime-list").innerHTML = animeArray.map((a, index) => `<div class='anime-name'>${index + 1}. ${a}<br></div>`).join("");
-            } catch (error) {
-                document.getElementById("anime-list").innerHTML = "Не удалось загрузить список.";
-                console.error(error);
-            }
-        }
-        fetchAnimeList();
-    </script>
+<div class="cursor"></div>
+<div class="typing-demo">Список посмотренных аниме Абусамата ;)</div>
+<div class="controls"><input type="text" id="search" placeholder="Поиск аниме..."><button id="reset-search">Сброс</button><div id="search-info">Показано: 0</div></div>
+<div id="anime-list">Загрузка...</div>
+<script>const q=e=>document.getElementById(e),s=e=>q("search-info").innerText=`Показано: ${e.length} из ${window.animeArray.length}`,d=e=>q("anime-list").innerHTML=e.length?e.map(a=>`<div class='anime-item'>${a.index}. ${a.title}</div>`).join(""):"<div class='anime-item'>Ничего не найдено.</div>";(async()=>{try{const e=await fetch("https://raw.githubusercontent.com/abusasa/animelist/main/myanimelist.txt");if(!e.ok)throw new Error("error");window.animeArray=(await e.text()).split("\n").map((e,a)=>({title:e.trim(),index:a+1})).filter(e=>""!==e.title);d(window.animeArray);s(window.animeArray)}catch(e){q("anime-list").innerHTML="Ошибка загрузки."}})(),q("search").addEventListener("input",function(){const e=window.animeArray.filter(e=>e.title.toLowerCase().includes(this.value.toLowerCase()));d(e);s(e)}),q("reset-search").addEventListener("click",function(){q("search").value="";d(window.animeArray);s(window.animeArray);q("search").focus()});const c=document.querySelector('.cursor');document.addEventListener("mousemove",e=>{c.classList.add("active");c.style.left=e.clientX+"px";c.style.top=e.clientY+"px"});document.addEventListener("mouseleave",()=>c.classList.remove("active"));</script>
 </body>
 </html>

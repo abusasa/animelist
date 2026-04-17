@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Абусамата</title>
+    <link rel="icon" href="vsdw.ico" type="image/x-icon">
+    <style>
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('minecraft.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        body { 
+            font-family: 'Minecraft', sans-serif; 
+            background: #000; 
+            color: #0f0; 
+            text-align: left; 
+            padding: 18px;
+            margin: 0;
+        }
+        .typing-demo {
+            display: inline-block;
+            width: 40ch;
+            animation: typing 2s steps(40, end) forwards;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: none;
+            font-family: 'Minecraft', monospace;
+            font-size: 1.4em;
+            color: #0f0;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .typing-demo::after {
+            content: '|';
+            color: #0f0;
+            opacity: 0;
+            animation: blink 500ms step-end infinite alternate 2s forwards;
+            margin-left: 2px;
+        }
+        @keyframes typing {
+            from { width: 0 }
+        }
+        @keyframes blink {
+            0%, 49% { opacity: 0; }
+            50%, 100% { opacity: 1; }
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        #search {
+            padding: 10px 12px;
+            width: 280px;
+            font-family: 'Minecraft', sans-serif;
+            background: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            outline: none;
+        }
+        #reset-search {
+            padding: 10px 16px;
+            font-family: 'Minecraft', sans-serif;
+            background: #0f0;
+            color: #000;
+            border: 1px solid #0f0;
+            cursor: pointer;
+        }
+        #search-info {
+            font-size: 0.95em;
+            color: #8b8b8b;
+        }
+        #anime-list {
+            max-width: 2000px;
+            padding: 0;
+            margin: 0;
+        }
+        .anime-item {
+            margin: 0;
+            padding: 2px 0;
+            background: #000;
+            line-height: 1.2;
+        }
+        body {
+            cursor: none;
+        }
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+            z-index: 9999;
+            display: none;
+        }
+        .cursor.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div>
+        <div class="typing-demo">Список посмотренных аниме Абусамата ;)</div>
+        <div class="controls">
+            <input type="text" id="search" placeholder="Поиск аниме...">
+            <button id="reset-search">Сброс</button>
+            <div id="search-info">Показано: 0</div>
+        </div>
+        <div id="anime-list">Загрузка...</div>
+    </div>
+    
+    <script>
+        async function fetchAnimeList() {
+            const repo = "abusasa/animelist";
+            const filePath = "myanimelist.txt";
+            const url = `https://raw.githubusercontent.com/${repo}/main/${filePath}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Ошибка загрузки списка");
+                const text = await response.text();
+                
+                window.animeArray = text.split("\n")
+                    .map((line, i) => ({ title: line.trim(), index: i + 1 }))
+                    .filter(item => item.title !== "");
+                displayAnime(window.animeArray);
+            } catch (error) {
+                document.getElementById("anime-list").innerHTML = "Не удалось загрузить список.";
+                console.error(error);
+            }
+        }
+
+        function displayAnime(animes) {
+            const list = document.getElementById("anime-list");
+            if (animes.length === 0) {
+                list.innerHTML = "<div class='anime-item'>Ничего не найдено.</div>";
+            } else {
+                list.innerHTML = animes
+                    .map(item => `<div class='anime-item'>${item.index}. ${item.title}</div>`)
+                    .join("");
+            }
+            document.getElementById("search-info").innerText = `Показано: ${animes.length} из ${window.animeArray.length}`;
+        }
+
+        document.getElementById("search").addEventListener("input", function() {
+            const query = this.value.toLowerCase();
+            const filtered = window.animeArray.filter(anime => anime.title.toLowerCase().includes(query));
+            displayAnime(filtered);
+        });
+
+        document.getElementById("reset-search").addEventListener("click", function() {
+            document.getElementById("search").value = "";
+            displayAnime(window.animeArray);
+            document.getElementById("search").focus();
+        });
+
+        fetchAnimeList();
+
+        // Custom cursor tracking
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.classList.add('active');
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursor.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
