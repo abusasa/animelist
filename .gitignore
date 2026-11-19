@@ -1,0 +1,7 @@
+node_modules/
+.next/
+.env.local
+.env*.local
+data/_enrich_cache.json
+design/
+*.log
